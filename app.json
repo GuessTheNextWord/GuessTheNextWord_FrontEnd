@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "guessthenextwordapp",
     "name": "GuessTheNextWord_FrontEnd",
     "slug": "GuessTheNextWord_FrontEnd",
     "version": "1.0.0",
@@ -24,6 +25,9 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
