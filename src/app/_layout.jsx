@@ -3,7 +3,8 @@ import { StatusBar } from 'expo-status-bar'
 import { StyleSheet, Text, View } from 'react-native'
 import Feather from '@expo/vector-icons/Feather';
 import Ionicons from '@expo/vector-icons/Ionicons';
-
+//TODO
+// - make the game tab inaccessible when the start game button was not pressed
 const _layout = () => {
   return (
     <View style={{flex: 1}}>

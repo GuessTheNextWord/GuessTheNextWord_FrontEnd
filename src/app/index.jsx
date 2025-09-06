@@ -1,33 +1,76 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native';
 import Stepper from '../components/stepper';
 import LanguageDropdown from '../components/languageDropDown';
-
+import { useState } from 'react';
+import { useRouter } from 'expo-router';
+//TODO
+// - implement how to play button on click functionality
+// - implement language functionality
 const Home = () => {
+  const router = useRouter();
+  const [numberOfPlayers, setNumberOfPlayers] = useState(2);
+  const [selectedLanguage, setSelectedLanguage] = useState('en');
+
+  const handleStartNewGame = async () => {
+    try {
+      const response = await fetch('https://5b18f8286439.ngrok-free.app/game/initialize-game', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          playersCount: numberOfPlayers,
+        }),
+      });
+      const gameData = await response.json();
+      const gameId = gameData.gameId;
+      const playerNames = gameData.playerNames;
+      router.push({
+      pathname: '/game',
+      params: {
+        gameId,
+        playerNames: JSON.stringify(playerNames), // Must be string for array/object
+      },
+    });
+    } catch (error) {
+      console.error('Error starting new game:', error);
+    }
+  };
+
   return (
-    <View >
-        <View style={styles.ContainerLogoButtonStyle}>
-          <Image source={require('../utils/HomePageImage.jpg')} style={styles.HomePageImageStyle} />
-          <TouchableOpacity style={styles.StartGameButtonStyle} onPress={() => { /* handle press */ }}>
-            <Text style={styles.ButtonTextStyle}>Start New Game</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.ContainerSettingsStyle}>
-          <Text style={styles.TextStyleSettings}>Game Settings</Text>
-          <View style={styles.SubContainerNumberOfPlayersStyle}>
-            <View>
-             <Text style={styles.TextStyleSettings}>Number of</Text>
+    <View>
+      <View style={styles.ContainerLogoButtonStyle}>
+        <Image source={require('../utils/HomePageImage.jpg')} style={styles.HomePageImageStyle} />
+        <TouchableOpacity
+          style={styles.StartGameButtonStyle}
+          onPress={handleStartNewGame}
+        >
+          <Text style={styles.ButtonTextStyle}>Start New Game</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.ContainerSettingsStyle}>
+        <Text style={styles.TextStyleSettings}>Game Settings</Text>
+        <View style={styles.SubContainerNumberOfPlayersStyle}>
+          <View>
+            <Text style={styles.TextStyleSettings}>Number of</Text>
             <Text style={styles.TextStyleSettings}>Players</Text>
-            </View>
-            <Stepper min={1} max={4} initial={2} onChange={value => console.log(value)} />
           </View>
-          <View style={styles.SubContainerLanguageStyle}>
-            <Text style={styles.TextLanguageStyle}>Language</Text>
-            <LanguageDropdown/>
-          </View>
+          <Stepper
+            min={1}
+            max={4}
+            initial={2}
+            onChange={value => setNumberOfPlayers(value)}
+          />
         </View>
-         <TouchableOpacity style={styles.HowToPlayButtonStyle} onPress={() => { /* handle press */ }}>
-            <Text style={{color:'rgba(0, 0, 0, 1)',fontSize:18}}>How to Play?</Text>
-          </TouchableOpacity>
+        <View style={styles.SubContainerLanguageStyle}>
+          <Text style={styles.TextLanguageStyle}>Language</Text>
+          <LanguageDropdown
+            selected={selectedLanguage}
+            onChange={setSelectedLanguage}
+          />
+        </View>
+      </View>
+      <TouchableOpacity style={styles.HowToPlayButtonStyle} onPress={() => { /* handle press */ }}>
+        <Text style={{color:'rgba(0, 0, 0, 1)',fontSize:18}}>How to Play?</Text>
+      </TouchableOpacity>
     </View>
   );
 };
